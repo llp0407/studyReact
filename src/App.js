@@ -15,24 +15,9 @@ export default class App extends Component {
         super()
         this.state = {
             title:'待办事项列表 state',
-            todos:[{
-                id:1,
-                title:'吃饭',
-                isCompleted:true
-            },{
-                id:2,
-                title:'睡觉',
-                isCompleted:false
-            },{
-                id:3,
-                title:'喝茶',
-                isCompleted:false
-            },{
-                id:4,
-                title:'王者',
-                isCompleted:false
-            },],
-            rich_text:`<div>富文本rich_text</div>`
+            todos:[],
+            rich_text:`<div>富文本rich_text</div>`,
+            isLoading:true
         }
     }
     addTodo=(todoTitle)=>{
@@ -40,7 +25,7 @@ export default class App extends Component {
         this.state.todos.push({
             id:this.state.todos.length+1,
             title:todoTitle,
-            isCompleted:false
+            completed:false
         })
         this.setState({
             todos:this.state.todos
@@ -49,7 +34,7 @@ export default class App extends Component {
     handleCommit=(idx)=>{
         // console.log(idx)
         let arr = [...this.state.todos]
-        arr[idx].isCompleted = true
+        arr[idx].completed = true
         this.setState({
             todos:arr
         },()=>{
@@ -59,7 +44,7 @@ export default class App extends Component {
     onCompletedChange = (idx)=>{
         console.log('onCompletedChange',idx)
         // let arr = [...this.state.todos]
-        // arr[idx].isCompleted = true
+        // arr[idx].completed = true
         // this.setState({
         //     todos:arr
         // },()=>{
@@ -78,11 +63,12 @@ export default class App extends Component {
                     <h3>{this.state.title}</h3>
                 </TodoHeader>
                 <TodoInput addTodo={this.addTodo} btnText="ADD"/>
-                <TodoList 
+                {this.state.isLoading?<div>loading...</div>:<TodoList 
                     todos={this.state.todos}
                     handleCommit={this.handleCommit}
                     onCompletedChange={this.onCompletedChange}
-                />
+                />}
+            
                 <Like ttt="pppp"></Like>
             </Fragment>
 
@@ -93,5 +79,24 @@ export default class App extends Component {
             //     <TodoList/>
             // </>
         )
+    }
+    componentDidMount(){
+        // console.log(this.http.getTodos)
+        this.http.getTodos().then(res=>{
+            console.log('请求结果',res)
+            if(res.status === 200){
+                this.setState({
+                    todos:res.data
+                })
+            }
+        })
+        .catch(err=>{
+            console.log(err)
+        })
+        .finally(()=>{
+            this.setState({
+                isLoading:false
+            })
+        })
     }
 }

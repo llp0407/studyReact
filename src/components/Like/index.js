@@ -5,11 +5,25 @@ import React, { Component } from 'react'
 export default class Like extends Component {
     constructor(){
         super()
+        console.log('constructor')
         this.state = {
-            isLiked: false
+            isLiked: false,
         }
     }
+    // static getDerivedStateFromProps(props, state){
+    //     console.log('getDerivedStateFromProps')
+    //     return {
+    //         isLiked: true,
+    //     }
+    // }
+    shouldComponentUpdate(res){
+        return true
+    }
+    componentDidMount(){
+        console.log('componentDidMount')
+    }
     render() {
+        console.log('render')
         return (
             <div>
                 <span onClick={this.handleLiked}>
@@ -29,8 +43,8 @@ export default class Like extends Component {
             return {
                 isLiked:!preState.isLiked
             }
-        },(res)=>{
-            console.log(res,'回调')
+        },()=>{
+            console.log('回调')
         })
         console.log('setState外部的isLiked',this.state.isLiked)
     }
